@@ -1,0 +1,18 @@
+.file-document .pdf-ng-image-title a,
+.file-document .pdf-ng-image-title a:active,
+.file-document .pdf-ng-image-title a:focus,
+.file-document .pdf-ng-image-title a:hover {
+  text-decoration: none;
+  color: #3b3b3b;
+
+}
+.file-document .pdf-ng-image img {
+  border: 1px solid #c0c0c0;
+  -moz-box-shadow: 2px 2px 5px #c0c0c0;
+  -webkit-box-shadow: 2px 2px 5px #c0c0c0;
+  box-shadow: 2px 2px 5px #c0c0c0;
+}
+.file-document .pdf-ng-image {
+  margin: 5px 0;
+}
+

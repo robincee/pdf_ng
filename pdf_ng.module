@@ -1,0 +1,92 @@
+<?php
+
+/**
+ * @file pdf_ng/pdf_ng.module
+ * PDF NG provides formatters and process functions
+ * for .pdf files.
+ */
+
+// A registry of variable_get defaults.
+include_once DRUPAL_ROOT . '/' . drupal_get_path('module', 'pdf_ng') . '/includes/pdf_ng.variables.inc';
+
+// Hooks and callbacks for integrating
+// with File Entity module for display.
+include_once DRUPAL_ROOT . '/' . drupal_get_path('module', 'pdf_ng') . '/includes/pdf_ng.formatters.inc';
+
+/**
+ * Implements hook_theme().
+ */
+function pdf_ng_theme($existing, $type, $theme, $path) {
+  return array(
+    'pdf_ng_document' => array(
+      'variables' => array('uri' => NULL, 'options' => array()),
+      'file' => 'pdf_ng.theme.inc',
+      'path' => $path . '/includes/themes',
+      'template' => 'pdf-ng--document',
+    ),
+    'pdf_ng_image' => array(
+      'variables' => array('uri' => NULL, 'options' => array()),
+      'file' => 'pdf_ng.theme.inc',
+      'path' => $path . '/includes/themes',
+      'template' => 'pdf-ng--image',
+    ),
+  );
+}
+
+/**
+ * Implements hook_file_insert().
+ */
+function pdf_ng_file_insert($file) {
+  if ($file->filemime == 'application/pdf') {
+    pdf_ng_process_file($file);
+  }
+}
+
+/**
+ * Process a pdf file - create thumbnails.
+ */
+function pdf_ng_process_file($file) {
+  if (!is_object($file)) {
+    return;
+  }
+  if ($file->filemime == "application/pdf") {
+    $src = drupal_realpath($file->uri);
+    $dest = drupal_realpath($file->uri) . ".png";
+    if (file_exists($dest)) {
+      unlink($dest);
+    }
+    // Possible TODO: add option to file upload in some crazy way to
+    // set the page we want to 'thumbnail' (or maybe evenmultiple).
+    // The [0] bit limits to page 1.
+    $exec = '/usr/bin/convert' . " " . escapeshellarg($src . '[0]') . " " . escapeshellarg($dest);
+    if (function_exists("exec")) {
+      exec($exec, $array, $status);
+    }
+    elseif (function_exists("system")) {
+      system($exec, $status);
+    }
+    elseif (function_exists("passthru")) {
+      passthru($exec, $status);
+    }
+    if ($status == 0) {
+      global $user;
+      $file_thumb_uri = $file->uri .'.png';
+      $file_thumb = new stdClass();
+      $file_thumb->uid = $user->uid;
+      $file_thumb->status = 1;
+      $file_thumb->filename = drupal_basename($dest);
+      $file_thumb->uri = $file_thumb_uri;
+      $file_thumb->filemime = file_get_mimetype($dest);
+      $pdf_ng_thumb = file_save($file_thumb);
+      return $pdf_ng_thumb;
+    }
+    else {
+      drupal_set_message(t("Error while creating PDF Thumbnails."), "error");
+      watchdog("PDF NG", "Error during the converstion from the file @src to @dest with the command @exec", array('@src' => $src, '@dest' => $dest, '@exec' => $exec), WATCHDOG_WARNING);
+      return NULL;
+    }
+  }
+  else {
+    return NULL;
+  }
+}

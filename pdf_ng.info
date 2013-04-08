@@ -1,0 +1,10 @@
+name = PDF NG
+description = A simple module to render PDFs (including thumbnails) without any client-side support required.
+
+core = 7.x
+dependencies[] = file_entity
+dependencies[] = libraries
+
+files[] = pdf_ng.module
+files[] = includes/pdf_ng.formatters.inc
+files[] = includes/pdf_ng.variables.inc

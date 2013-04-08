@@ -1,0 +1,56 @@
+<?php
+/**
+ * @file pdf_ng/pdf_ng.install
+ * Requirement and uninstall functions for the PDF NG module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function pdf_ng_requirements($phase) {
+  $requirements = array();
+  if ($phase == 'runtime') {
+    $open_basedir = ini_get("open_basedir");
+    $safe_mode_exec_dir = ini_get("safe_mode_exec_dir");
+
+    $requirements['pdf_ng_convert'] = array(
+      'title' => t('PDF NG'),
+    );
+
+    $requirements['pdf_ng_convert']['description'] = t('Confirm the existance of the !convert application.', array('!convert' => '<i>convert</i>'));
+
+    if (!empty($open_basedir)) {
+      $requirements['pdf_ng_convert']['severity'] = REQUIREMENT_WARNING;
+      $requirements['pdf_ng_convert']['value'] = t('open_base_dir restriction in effect. Not possible to check !convert path.', array('!convert' => '<i>convert</i>'));
+    }
+    else {
+      if (!file_exists('/usr/bin/convert')) {
+        $requirements['pdf_ng_convert']['severity'] = REQUIREMENT_ERROR;
+        $requirements['pdf_ng_convert']['value'] = t('Can not find the !convert application.', array('!convert' => '<i>convert</i>'));
+      }
+      else {
+        $requirements['pdf_ng_convert']['severity'] = REQUIREMENT_OK;
+        $requirements['pdf_ng_convert']['value'] = t('/usr/bin/convert found');
+      }
+    }
+
+    if (!empty($safe_mode_exec_dir)) {
+      $requirements['pdf_ng_convert']['severity'] = REQUIREMENT_WARNING;
+      $requirements['pdf_ng_convert']['value'] = t('open_base_dir restriction in effect. Make sure @convert is located in this directory: !directory', array('@directory' => $safe_mode_exec_dir, '!convert' => '<i>convert</i>'));
+    }
+  }
+
+
+
+
+
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function pdf_ng_uninstall() {
+  db_delete('variable')->condition('name', 'pdf_ng%', 'LIKE')->execute();
+}
