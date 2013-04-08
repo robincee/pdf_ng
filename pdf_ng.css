@@ -1,10 +1,12 @@
+
+.file-application-pdf a.media-colorbox,
+.file-application-pdf a.media-colorbox:active,
+.file-application-pdf a.media-colorbox:focus,
 .file-document .pdf-ng-image-title a,
 .file-document .pdf-ng-image-title a:active,
-.file-document .pdf-ng-image-title a:focus,
-.file-document .pdf-ng-image-title a:hover {
+.file-document .pdf-ng-image-title a:focus {
   text-decoration: none;
   color: #3b3b3b;
-
 }
 .file-document .pdf-ng-image img {
   border: 1px solid #c0c0c0;

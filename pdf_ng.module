@@ -30,6 +30,12 @@ function pdf_ng_theme($existing, $type, $theme, $path) {
       'path' => $path . '/includes/themes',
       'template' => 'pdf-ng--image',
     ),
+    'pdf_ng_link' => array(
+      'variables' => array('uri' => NULL, 'options' => array()),
+      'file' => 'pdf_ng.theme.inc',
+      'path' => $path . '/includes/themes',
+      'template' => 'pdf-ng--link',
+    ),
   );
 }
 

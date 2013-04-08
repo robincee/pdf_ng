@@ -115,6 +115,9 @@ The link to and new window are the most interesting. These options
 allow to fine tune the link a bit, open the document in a new window,
 or in the same window.
 
+I have also added a 'PDF Link' display mode. This renders a link
+to the pdf file loaded in pdf.js, optionally in a new window.
+
 
 How to configure this all with colorbox?
 
@@ -127,11 +130,17 @@ Create 3 new entity view modes for the 'file' entity, name them something like:
 
 Create a new image style for the thumbnail. Let's make it 90x130 pixels.
 
+Edit the 'Colorbox Thumbnail' document file display
+Set the display to 'image' and select the
+thumbnail you created in the previous step.
+
 Visit admin/structure/file-types/manage/document/file-display and edit
 the new entity view modes:
 - Enable 'Media Colorbox' on the PDF trigger.
 - Set the 'File view mode' to PDF Colorbox Thumbnail.
 - Set the 'Colorbox view mode' to PDF Colorbox Document.
+
+
 
 Save everything and enjoy the ride!
 

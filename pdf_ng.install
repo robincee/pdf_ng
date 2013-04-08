@@ -41,7 +41,7 @@ function pdf_ng_requirements($phase) {
   }
 
 
-
+  // TODO: add check for pdf.js
 
 
 

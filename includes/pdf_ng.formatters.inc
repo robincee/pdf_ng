@@ -31,6 +31,18 @@ function pdf_ng_file_formatter_info() {
   foreach (pdf_ng_image_variable_default() as $image_setting => $image_value) {
     $formatters['pdf_ng_image']['default settings'][$image_setting] = pdf_ng_image_variable_get($image_setting);
   }
+  $formatters['pdf_ng_link'] = array(
+    'label' => t('PDF link'),
+    'file types' => array('document'),
+    'default settings' => array(
+      'image_style' => '',
+    ),
+    'view callback' => 'pdf_ng_file_formatter_link_view',
+    'settings callback' => 'pdf_ng_file_formatter_link_settings',
+  );
+  foreach (pdf_ng_link_variable_default() as $image_setting => $image_value) {
+    $formatters['pdf_ng_link']['default settings'][$image_setting] = pdf_ng_image_variable_get($image_setting);
+  }
   return $formatters;
 }
 
@@ -118,6 +130,38 @@ function pdf_ng_file_formatter_image_settings($form, &$form_state, $settings) {
     '#title' => t('New window'),
     '#default_value' => $settings['new_window'],
     '#description' => t("If checked, the linked thumbnail will open in a new tab/window."),
+  );
+  return $element;
+}
+
+/**
+ * Implements hook_file_formatter_FORMATTER_view().
+ */
+function pdf_ng_file_formatter_link_view($file, $display, $langcode) {
+  if ($file->filemime == 'application/pdf') {
+    $element = array(
+      '#theme' => 'pdf_ng_link',
+      '#uri' => $file->uri,
+      '#options' => array(),
+    );
+    $display['settings']['attributes'] = array();
+    foreach (pdf_ng_link_variable_default() as $setting => $default_value) {
+      $element['#options'][$setting] = isset($file->override[$setting]) ? $file->override[$setting] : $display['settings'][$setting];
+    }
+    return $element;
+  }
+}
+
+/**
+ * Implements hook_file_formatter_FORMATTER_settings().
+ */
+function pdf_ng_file_formatter_link_settings($form, &$form_state, $settings) {
+  $element = array();
+  $element['new_window'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('New window'),
+    '#default_value' => $settings['new_window'],
+    '#description' => t("If checked, the linked PDF will open in a new tab/window."),
   );
   return $element;
 }

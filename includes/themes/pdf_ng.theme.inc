@@ -10,8 +10,25 @@
 /**
  * Preprocess function for theme('pdf_ng_image').
  */
+function pdf_ng_preprocess_pdf_ng_link(&$variables) {
+  drupal_add_css(drupal_get_path('module', 'pdf_ng') . '/pdf_ng.css');
+  $file_object = file_uri_to_object($variables['uri']);
+  $variables['title'] = check_plain($file_object->filename);
+  $file_url = file_create_url($variables['uri']);
+  $variables['url'] = $GLOBALS['base_url'] . '/' . libraries_get_path('pdf.js') . '/web/viewer.html?file=' . $file_url;
+  if ($variables['options']['new_window']) {
+    $variables['output'] = l($variables['title'], $variables['url'], array('html' => TRUE, 'attributes' => array('target' => '_blank')));
+  }
+  else {
+    $variables['output'] = l($variables['title'], $variables['url'], array('html' => TRUE));
+  }
+}
+
+/**
+ * Preprocess function for theme('pdf_ng_image').
+ */
 function pdf_ng_preprocess_pdf_ng_image(&$variables) {
-    drupal_add_css(drupal_get_path('module', 'pdf_ng') . '/pdf_ng.css');
+  drupal_add_css(drupal_get_path('module', 'pdf_ng') . '/pdf_ng.css');
   // Do not display the name for the 'square_thumbnail', we use
   // this mode in the media browser and node_edit form.
   $file_object = file_uri_to_object($variables['uri']);
